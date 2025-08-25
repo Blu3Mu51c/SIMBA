@@ -11,7 +11,6 @@ const OrdersPage = ({ user, setUser }) => {
       </aside>
       <div>
         <h1>Orders</h1>
-        <Orders user={user} />
       </div>
     </main>
   );

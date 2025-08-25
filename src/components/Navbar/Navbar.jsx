@@ -14,12 +14,13 @@ export default function NavBar({ user, setUser }) {
         <strong>{user.name}</strong> ({user.email})
       </div>
       {/* Common links */}
-      <Link to="/analytics" style={{ marginRight: '1rem' }}>Analytics</Link>
       <Link to="/profile" style={{ marginRight: '1rem' }}>Profile</Link>
       {/* Role-based links */}
       {user.role === 'admin' && (
         <>
+        <Link to="/analytics" style={{ marginRight: '1rem' }}>Analytics</Link>
           <Link to="/stock-request" style={{ marginRight: '1rem' }}>Stock Requests</Link>
+          <Link to="/items" style={{ marginRight: '1rem' }}>Items</Link>
         </>
       )}
       {user.role === 'user' && (
