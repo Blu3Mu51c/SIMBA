@@ -15,6 +15,7 @@ import checkToken from "./config/checkToken.js"
 import ensureLoggedIn from "./config/ensureLoggedIn.js"
 import managementRoutes from "./routes/api/management.js";
 
+
 const app = express()
 
 const __filename = fileURLToPath(import.meta.url)
