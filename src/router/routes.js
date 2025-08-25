@@ -24,4 +24,3 @@ export const userRoutes = [
   { path: '/cart', element: <CartPage /> },
   { path: '/requests', element: <StudentRequestsPage /> },
 ];
-
