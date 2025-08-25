@@ -25,4 +25,3 @@ export const userRoutes = [
   { path: '/requests', element: <StudentRequestsPage /> },
 ];
 
-
