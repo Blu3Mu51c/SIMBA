@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import './Cart.module.scss';
+import React, { useState, useEffect } from "react";
+import { addToCart, removeFromCart } from "../../../utilities/items-api";
+import Button from '../../../components/Button/Button';
+import "./Cart.module.scss";
 
 export default function Cart({ user, onCartUpdate }) {
   const [cartItems, setCartItems] = useState([]);
@@ -15,51 +17,24 @@ export default function Cart({ user, onCartUpdate }) {
     onCartUpdate && onCartUpdate();
   };
 
-  const incrementItem = async (item) => {
-    if (item.quantity <= 0) return;
-    try {
-      await fetch(`/api/items/${item._id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`
-        },
-        body: JSON.stringify({ quantity: item.quantity - 1 })
-      });
-
-      const updatedCart = cartItems.map(i =>
-        i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
-      );
-      updateCart(updatedCart);
-    } catch (err) {
-      console.error(err);
+const adjustItemQty = async (item, delta) => {
+  try {
+    if (delta > 0) {
+      await addToCart(item._id);    // DB stock -1
+    } else {
+      await removeFromCart(item._id); // DB stock +1
     }
-  };
 
-  const decrementItem = async (item) => {
-    try {
-      await fetch(`/api/items/${item._id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`
-        },
-        body: JSON.stringify({ quantity: item.quantity + 1 })
-      });
+    const updatedCart = cartItems
+      .map(i => i._id === item._id ? { ...i, quantity: i.quantity + delta } : i)
+      .filter(i => i.quantity > 0); // remove item if quantity drops to 0
 
-      let updatedCart;
-      if (item.quantity === 1) {
-        updatedCart = cartItems.filter(i => i._id !== item._id);
-      } else {
-        updatedCart = cartItems.map(i =>
-          i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
-        );
-      }
-      updateCart(updatedCart);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    updateCart(updatedCart);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   if (cartItems.length === 0) {
     return (
@@ -94,13 +69,9 @@ export default function Cart({ user, onCartUpdate }) {
               <div className="cartCard__details">
                 <p className="cartCard__name">{item.name}</p>
                 <div className="cartCard__qty">
-                  <button className="qtyBtn" onClick={() => decrementItem(item)}>
-                    –
-                  </button>
+                  <button className="qtyBtn" onClick={() => adjustItemQty(item, -1)}>–</button>
                   <span className="qtyBadge">{item.quantity}</span>
-                  <button className="qtyBtn" onClick={() => incrementItem(item)}>
-                    +
-                  </button>
+                 <button className="qtyBtn" onClick={() => adjustItemQty(item, 1)}>+</button>
                 </div>
               </div>
             </div>
