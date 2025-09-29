@@ -389,24 +389,27 @@ export async function adjustQty(req, res) {
     if (!Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: "Invalid id" });
     }
-    if (!Number.isFinite(amount) || amount <= 0) {
-      return res.status(400).json({ success: false, message: "amount must be a positive integer" });
+
+    // allow negative numbers
+    if (!Number.isFinite(amount) || amount === 0) {
+      return res.status(400).json({ success: false, message: "amount must be a non-zero integer" });
     }
 
-    // Atomic guard: only decrement if enough stock exists
-    const updated = await Item.findOneAndUpdate(
-      { _id: id, quantity: { $gte: amount } },
-      { $inc: { quantity: -amount } },
-      { new: true }
-    ).populate("location").populate("createdBy", "name email");
-
-    if (!updated) {
-      return res.status(409).json({ success: false, message: "Insufficient stock" });
+    // now adjust stock:
+    const item = await Item.findById(id);
+    if (!item) {
+      return res.status(404).json({ success: false, message: "Item not found" });
     }
 
-    res.status(200).json({ success: true, data: updated });
+    item.quantity -= amount; // subtract positive to reduce, subtract negative to increase
+    if (item.quantity < 0) item.quantity = 0;
+    await item.save();
+
+    res.json({ success: true, quantity: item.quantity });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message || "Server error" });
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 }
+
 export default { index, show, create, update, destroy, lowStock, adjustQty };
