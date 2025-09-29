@@ -152,6 +152,8 @@ $error: #ff3b5c;
     user-select: none;
     transition: color .2s ease;
   }
+
+  input:checked + label { color: darken($accent, 12%); }
 }
 
 @media (max-width: 480px) {

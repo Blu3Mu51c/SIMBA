@@ -4,14 +4,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Cart from "../../../components/Booking/Cart/Cart";
 
-
 const API_BASE =
   import.meta?.env?.VITE_API_BASE_URL || "http://localhost:3000";
 
 export default function CartPage({ user, onCartUpdate }) {
   const [pickupDate, setPickupDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
-
+  
   // optional: preload existing saved dates from the cart
   useEffect(() => {
     const loadCart = async () => {
@@ -100,7 +99,6 @@ const handleCheckout = async () => {
       requestedDays: requestedDays || 1,
     }));
 
-    // 3️⃣ Submit
     const res = await fetch(`${API_BASE}/api/orders/submit`, {
       method: "POST",
       headers: {
@@ -117,8 +115,6 @@ const handleCheckout = async () => {
       alert("Order submitted successfully!");
       localStorage.removeItem("cart");
       onCartUpdate && onCartUpdate();
-
-          navigate(`/orders/${data.data._id}`);
     } else {
       alert(data.message || "Checkout failed");
     }
