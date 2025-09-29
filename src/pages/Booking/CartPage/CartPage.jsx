@@ -10,7 +10,7 @@ const API_BASE =
 export default function CartPage({ user, onCartUpdate }) {
   const [pickupDate, setPickupDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
-  
+
   // optional: preload existing saved dates from the cart
   useEffect(() => {
     const loadCart = async () => {
