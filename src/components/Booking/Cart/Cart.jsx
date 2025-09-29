@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
-import "./Cart.module.scss";
 import { addToCart, removeFromCart } from "../../../utilities/items-api";
+import Button from '../../../components/Button/Button';
+import "./Cart.module.scss";
 
 export default function Cart({ user, onCartUpdate }) {
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
     setCartItems(savedCart);
   }, []);
 
   const updateCart = (updatedCart) => {
     setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
     onCartUpdate && onCartUpdate();
   };
 
